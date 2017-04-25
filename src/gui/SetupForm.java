@@ -9,10 +9,11 @@ import javax.swing.border.EmptyBorder;
 
 import gui.eventlisteners.SetupFormOnCloseListener;
 import gui.eventlisteners.SetupFormOnOkListener;
+import utils.GraphUtils;
 
-import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,8 @@ public class SetupForm extends JFrame {
 
     private JPanel contentPane;
     private boolean clickedOk = false;
-    private List<SetupFormOnOkListener> onOkListeners = new ArrayList<>();
-    private List<SetupFormOnCloseListener> onCloseListeners = new ArrayList<>();
+    private List<SetupFormOnOkListener> onOkListeners = new ArrayList<SetupFormOnOkListener>();
+    private List<SetupFormOnCloseListener> onCloseListeners = new ArrayList<SetupFormOnCloseListener>();
 
     /**
      * Launch the application.
@@ -53,7 +54,7 @@ public class SetupForm extends JFrame {
                 }
             }
         });
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
