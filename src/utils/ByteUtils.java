@@ -5,6 +5,19 @@ import java.nio.ByteOrder;
 
 public class ByteUtils {
 
+    public static byte[] shortToBytes(short s, boolean bigEndian) {
+        ByteBuffer buffer = ByteBuffer.wrap(new byte[2]);
+        buffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
+        buffer.putShort(s);
+        return buffer.array();
+    }
+    
+    public static short bytesToShort(byte[] b, int position, boolean bigEndian) {
+        ByteBuffer buffer = ByteBuffer.wrap(b, position, 2);
+        buffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
+        return buffer.getShort();
+    }
+    
     public static byte[] intToBytes(int i, boolean bigEndian) {
         ByteBuffer buffer = ByteBuffer.wrap(new byte[4]);
         buffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
@@ -12,7 +25,7 @@ public class ByteUtils {
         return buffer.array();
     }
     
-    public static float bytesToInt(byte[] b, int position, boolean bigEndian) {
+    public static int bytesToInt(byte[] b, int position, boolean bigEndian) {
         ByteBuffer buffer = ByteBuffer.wrap(b, position, 4);
         buffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
         return buffer.getInt();
