@@ -11,8 +11,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jtransforms.fft.FloatFFT_1D;
 
+import audio.Audio;
 import gui.SetupForm;
 import utils.ByteUtils;
 import utils.GraphUtils;
@@ -34,29 +36,12 @@ public class ContentAwareAudioResizer {
         String[] files = new String[] { "ah", "eh", "ch" };
         for (String file : files) {
             try {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(file + ".wav"));
-//                System.out.println("Encoding: " + audioIn.getFormat().getEncoding().toString());
-//                System.out.println("Sample size: " + audioIn.getFormat().getSampleSizeInBits());
-//                System.out.println("Frame size: " + audioIn.getFormat().getFrameSize());
-    //            Clip clip = AudioSystem.getClip();
-    //            clip.open(audioIn);
-    //            clip.start();
-                byte[] buffer = new byte[4];
-                int i = 0;
-                int count = 0;
+            	Audio audioIn = new Audio(file + ".wav");
                 int totalSamples = audioIn.available() / 2;
-                float[] samples = new float[totalSamples];
-                while (audioIn.read(buffer) != -1) {
-    //                System.out.println(ByteUtils.bytesToShort(buffer, 0, false));
-    //                System.out.println(ByteUtils.bytesToShort(buffer, 2, false));
-                    samples[count] = ByteUtils.bytesToShort(buffer, 0, false);
-                    samples[count + 1] = ByteUtils.bytesToShort(buffer, 2, false);
-                    count += 2;
-                    //System.out.println(ByteUtils.bytesToShort(buffer, 0, false));
-    //                if (i++ > 10) {
-    //                    break;
-    //                }
-                }
+                Float[] fsamples = new Float[totalSamples];
+                audioIn.read(fsamples);
+                float[] samples = ArrayUtils.toPrimitive(fsamples);
+                
                 //GraphUtils.dataToGraph(samples, "test1.bmp");
                 FloatFFT_1D fft = new FloatFFT_1D(samples.length);
                 fft.realForward(samples);
@@ -70,34 +55,11 @@ public class ContentAwareAudioResizer {
 //                System.out.println("Counted samples: " + count);
 //                System.out.println("Total samples: " + totalSamples);
                 audioIn.close();
-            } catch (UnsupportedAudioFileException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
-        
-//        try {
-//            float[] vals = new float[201];
-//            for (int i = 0; i < vals.length; i++) {
-//                vals[i] = (float)
-//                ( 1 * 0 * Math.sin(i * Math.PI / vals.length * 2)
-//                + 10 * Math.sin(i * Math.PI / vals.length * 4)
-//                + 3 * 0 * Math.sin(i * Math.PI / vals.length * 12)
-//                + 4 * 0 * Math.sin(i * Math.PI / vals.length * 100));
-//            }
-//            GraphUtils.dataToGraph(vals, "out1.bmp");
-//            FloatFFT_1D fft = new FloatFFT_1D(vals.length);
-//            fft.realForward(vals);
-//            GraphUtils.dataToGraph(vals, "out2.bmp");
-//            vals = filterRealComponent(vals);
-//            GraphUtils.dataToGraph(vals, "out3.bmp");
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
         System.out.println("Done.");
     }
     
