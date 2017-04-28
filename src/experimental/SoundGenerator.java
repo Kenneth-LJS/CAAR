@@ -27,7 +27,7 @@ public class SoundGenerator {
 //                audio.getFormat().getSampleSizeInBits(), audio.getFormat().getChannels(),
 //                audio.getFormat().getFrameSize(), audio.getFormat().getFrameRate(), true);
 //        
-        long audioLength = 44810 * 3;
+        long audioLength = (long)Math.round(SAMPLE_RATE * 3);
         if (audioLength % 16 != 0) {
             audioLength += 16 - (audioLength % 16);
         }
