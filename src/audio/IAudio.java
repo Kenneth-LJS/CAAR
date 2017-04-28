@@ -1,12 +1,43 @@
 package audio;
 
-public interface IAudio<E> {
+import java.io.IOException;
 
-    public int available();
-    public void close();
-    public E read();
-    public int read(E[] b);
-    public int read(E[] b, int off, int len);
-    public long skip(long n);
+import javax.sound.sampled.AudioInputStream;
+
+public abstract class IAudio<E> {
+
+	protected AudioInputStream audio;
+
+    public abstract int read(E[] b);
+    public abstract int read(E[] b, int off, int len);
+    public abstract E read();
+	public int available() {
+		try {
+			return audio.available();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public void close() {
+		try {
+			audio.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public long skip(long n) {
+		try {
+			return audio.skip(n);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
     
 }

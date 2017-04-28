@@ -1,15 +1,11 @@
 package experimental;
 
-import java.io.File;
 import java.io.IOException;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
+import org.apache.commons.lang3.ArrayUtils;
 import org.jtransforms.fft.FloatFFT_1D;
 
-import utils.ByteUtils;
+import audio.Audio;
 import utils.GraphUtils;
 
 public class VowelDetection {
@@ -19,29 +15,12 @@ public class VowelDetection {
         //files = new String[] { "ee" };
         for (String file : files) {
             try {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(file + ".wav"));
-//                System.out.println("Encoding: " + audioIn.getFormat().getEncoding().toString());
-//                System.out.println("Sample size: " + audioIn.getFormat().getSampleSizeInBits());
-//                System.out.println("Frame size: " + audioIn.getFormat().getFrameSize());
-    //            Clip clip = AudioSystem.getClip();
-    //            clip.open(audioIn);
-    //            clip.start();
-                byte[] buffer = new byte[4];
-                int i = 0;
-                int count = 0;
+                Audio audioIn = new Audio(file + ".wav");
                 int totalSamples = audioIn.available() / 2;
-                float[] samples = new float[totalSamples];
-                while (audioIn.read(buffer) != -1) {
-    //                System.out.println(ByteUtils.bytesToShort(buffer, 0, false));
-    //                System.out.println(ByteUtils.bytesToShort(buffer, 2, false));
-                    samples[count] = ByteUtils.bytesToShort(buffer, 0, false);
-                    samples[count + 1] = ByteUtils.bytesToShort(buffer, 2, false);
-                    count += 2;
-                    //System.out.println(ByteUtils.bytesToShort(buffer, 0, false));
-    //                if (i++ > 10) {
-    //                    break;
-    //                }
-                }
+                Float[] fsamples = new Float[totalSamples];
+                audioIn.read(fsamples);
+                float[] samples = ArrayUtils.toPrimitive(fsamples);
+                
                 //GraphUtils.dataToGraph(samples, "test1.bmp");
                 FloatFFT_1D fft = new FloatFFT_1D(samples.length);
                 fft.realForward(samples);
@@ -50,14 +29,11 @@ public class VowelDetection {
                 for (int j = 0; j < samples.length; j++) {
                     samples[j] = Math.abs(samples[j]);
                 }
-                GraphUtils.dataToGraph(samples, "file - " + file + ".bmp");
+                GraphUtils.dataToGraph(samples, "out - " + file + ".bmp");
                 System.out.println(file + " : " + calcFormula(samples));
 //                System.out.println("Counted samples: " + count);
 //                System.out.println("Total samples: " + totalSamples);
                 audioIn.close();
-            } catch (UnsupportedAudioFileException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
