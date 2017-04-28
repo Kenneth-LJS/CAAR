@@ -3,13 +3,16 @@ package experimental;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 import utils.ByteUtils;
@@ -19,153 +22,43 @@ import javax.sound.sampled.AudioFileFormat.Type;
 public class SoundGenerator {
 
     private static final float SAMPLE_RATE = 44100;
-    
+    private static TargetDataLine targetLine;
     public static void main(String[] args) throws IOException {
-//        AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 1, true, true);
-//        InputStream is = new ByteArrayInputStream(output);
-//        AudioFormat af = new AudioFormat(Encoding.PCM_UNSIGNED, audio.getFormat().getSampleRate(),
-//                audio.getFormat().getSampleSizeInBits(), audio.getFormat().getChannels(),
-//                audio.getFormat().getFrameSize(), audio.getFormat().getFrameRate(), true);
-//        
-        long audioLength = 44810 * 3;
+        long audioLength = 44100 * 3;
         if (audioLength % 16 != 0) {
             audioLength += 16 - (audioLength % 16);
         }
         AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 1, true, true);
-        AudioInputStream stream = new AudioInputStream(new SineByteStream(audioLength), format, audioLength);
-        AudioSystem.write(stream, Type.WAVE, new File("file.wav"));
-//        AudioInputStream stream = new AudioInputStream(is, audio.getFormat(), (long) buff2.length);
-//        AudioSystem.write(stream, Type.WAVE, new File("file.wav"));
-        System.out.println("Done.");
-    }
-    
-    private static class SineDataLine implements TargetDataLine {
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+		try {
+			targetLine = (TargetDataLine) AudioSystem.getLine(info);
+	        AudioInputStream stream = new AudioInputStream((TargetDataLine) targetLine){
 
-        public int available() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public void drain() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void flush() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public int getBufferSize() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public AudioFormat getFormat() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public int getFramePosition() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public float getLevel() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public long getLongFramePosition() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public long getMicrosecondPosition() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public boolean isActive() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public boolean isRunning() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public void start() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void stop() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void addLineListener(LineListener arg0) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void close() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public Control getControl(javax.sound.sampled.Control.Type arg0) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public Control[] getControls() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public javax.sound.sampled.Line.Info getLineInfo() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public boolean isControlSupported(javax.sound.sampled.Control.Type arg0) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public boolean isOpen() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public void open() throws LineUnavailableException {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void removeLineListener(LineListener arg0) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void open(AudioFormat arg0) throws LineUnavailableException {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void open(AudioFormat arg0, int arg1) throws LineUnavailableException {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public int read(byte[] arg0, int arg1, int arg2) {
-            // TODO Auto-generated method stub
-            return 0;
-        }
+	            private long lengthLeft = 44100 * 3;
+	            private double theta = 0;
+	            private double stepSize = Math.PI / 100;
+	            public int read(byte[] b, int off, int len) {
+	                if (lengthLeft < 0) {
+	                    return -1;
+	                }
+	                len = b.length - b.length % 2;
+	                for (int i = 0; i < len; i += 2) {
+	                    byte[] arr = ByteUtils.shortToBytes((short)Math.floor(Math.sin(theta) * 3000), true);
+	                    b[off + i] = arr[0];
+	                    b[off + i + 1] = arr[1];
+	                    theta = (theta + stepSize) % (2 * Math.PI);
+	                }
+	                lengthLeft -= len;
+	                return len;
+	            }
+	        };
+	        AudioSystem.write(stream, Type.WAVE, new File("file.wav"));
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
+        System.out.println("Done.");
     }
     
     private static class SineByteStream extends InputStream {
