@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.EventQueue;
+
 import gui.SetupForm;
 
 public class ContentAwareAudioResizer {
