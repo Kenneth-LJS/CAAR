@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jtransforms.fft.FloatFFT_1D;
 
 import audio.Audio;
+import audio.CompressTest;
 import gui.SetupForm;
 import utils.ByteUtils;
 import utils.GraphUtils;
@@ -22,17 +23,8 @@ import utils.GraphUtils;
 public class ContentAwareAudioResizer {
 
     public static void main(String args[]) {
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                try {
-//                    SetupForm frame = new SetupForm();
-//                    // todo: add listeners
-//                    frame.setVisible(true);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+    	CompressTest.compressAndSave("test.wav", 1.2f);
+    	/*
         String[] files = new String[] { "ah", "eh", "ch" };
         for (String file : files) {
             try {
@@ -60,6 +52,7 @@ public class ContentAwareAudioResizer {
                 e1.printStackTrace();
             }
         }
+        */
         System.out.println("Done.");
     }
     

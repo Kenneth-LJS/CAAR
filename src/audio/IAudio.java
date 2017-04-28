@@ -2,6 +2,7 @@ package audio;
 
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
 public abstract class IAudio<E> {
@@ -11,6 +12,11 @@ public abstract class IAudio<E> {
     public abstract int read(E[] b);
     public abstract int read(E[] b, int off, int len);
     public abstract E read();
+    
+    public AudioFormat getFormat(){
+    	return audio.getFormat();
+    }
+    
 	public int available() {
 		try {
 			return audio.available();
