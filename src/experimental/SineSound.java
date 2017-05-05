@@ -4,7 +4,7 @@ import javax.sound.sampled.AudioFormat;
 
 import utils.ByteUtils;
 
-public class SineSound extends SoundTemplate{
+public class SineSound extends SoundTemplate {
 
     private long lengthLeft;
     private double stepSize;

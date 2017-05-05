@@ -7,10 +7,9 @@ import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-
-import audio.SoundType;
-
 import javax.sound.sampled.AudioFileFormat.Type;
+
+import audio.analyzer.SoundType;
 import utils.ByteUtils;
 
 public class SilenceRemover {
